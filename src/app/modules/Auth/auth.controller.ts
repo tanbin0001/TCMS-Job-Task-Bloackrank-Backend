@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../../utils/catchAsync";
 import sendResponse from "../../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
-
+ 
 
 
 
@@ -39,12 +39,35 @@ const loginUser = catchAsync(async(req, res) => {
 
 )
 
- 
+const changePassword = catchAsync(async (req, res) => {
+    // console.log(req,'from controller');
+
+    try {
+      const { ...passwordData } = req.body;
+      const result = await AuthServices.changePassword(req.user, passwordData);
+  
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Password is changed successfully',
+        data: result,
+      });
+    } catch (error :any) {
+      sendResponse(res, {
+          success: false,
+        statusCode: 400,
+        message:  error.message ,
+        data: null,
+      });
+    }
+  });
   
 
 
 export const  AuthControllers = {
 registerUser,
 loginUser,
+ 
+changePassword
  
 }

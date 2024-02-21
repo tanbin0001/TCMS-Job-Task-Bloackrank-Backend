@@ -53,7 +53,7 @@ userSchema.pre('save', async function (next) {
 
 
  
-
+ 
 userSchema.statics.isUserExists = async function (username: string) {
     return await User.findOne({ username }).select('+password');
 }
@@ -61,6 +61,7 @@ userSchema.statics.isUserPasswordMatched = async function (plainTextPassword, ha
     return await bcrypt.compare(plainTextPassword, hashedPassword)
         ;
 }
+
 
 userSchema.statics.isJwtIssuedBeforePasswordChange = function(passwordChangedTimeStamp : Date, jwtIssuedTimeStamp: number){
     const passwordChangeTime = new Date (passwordChangedTimeStamp).getTime()/1000;

@@ -6,6 +6,9 @@ import { TLoginUser, TRegisterUser } from "./auth.interface"
 import { AppError } from "../../errors/AppError";
 import { createToken } from "./auth.utils";
 import config from "../../config";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
  
 const registerUserIntoDb = async (payload: TRegisterUser) => {
     const userData = await User.isUserExists(payload.username)
@@ -71,6 +74,47 @@ const loginUserIntoDb = async (payload: TLoginUser) => {
 }
 
  
+const changePassword = async (user: JwtPayload, payload: { currentPassword: string, newPassword: string }) => {
+ 
+    const { email } = user;
+
+
+    // check if the user exists
+    const userData = await User.findOne({ email });
+ 
+ 
+    if (!userData) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+    
+
+ 
+
+    // checking if the current password is correct
+    if (!(await User.isUserPasswordMatched(payload?.currentPassword, userData.password))) {
+        throw new AppError(httpStatus.FORBIDDEN, 'Current password is not matched');
+    }
+
+
+    
+
+    // hash the new password
+    const newHashedPassword = await bcrypt.hash(payload.newPassword, Number(config.bcrypt_salt_rounds));
+    
+  
+ 
+
+    // update the user document
+    const result =  await User.findByIdAndUpdate(
+        { _id: user._id },
+        { password: newHashedPassword,
+           
+             updatedAt: new Date,
+            }
+    );
+    
+
+};
 
  
 
@@ -78,5 +122,6 @@ const loginUserIntoDb = async (payload: TLoginUser) => {
 export const AuthServices = {
     registerUserIntoDb,
     loginUserIntoDb,
-  
+     
+    changePassword
 }

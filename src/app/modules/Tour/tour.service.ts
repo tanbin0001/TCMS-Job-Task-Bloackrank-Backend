@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import { AppError } from "../../errors/AppError";
 import { TTour } from "./tour.interface";
 import { TourModel } from "./tour.model"
 
@@ -28,6 +30,13 @@ const updateTourIntoDB = async (
     _id: string,
     payload: Partial<TTour>,
 ) => {
+ 
+     const tour = await TourModel.findById(_id);
+     if(tour?.expenseStatus === 'paid'){
+        throw new AppError(httpStatus.BAD_REQUEST, 'You ca')
+     }
+ 
+
     const result = await TourModel.findOneAndUpdate({ _id }, payload, {
         new: true,
     })
