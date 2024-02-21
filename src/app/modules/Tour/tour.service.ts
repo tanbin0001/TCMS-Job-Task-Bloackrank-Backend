@@ -10,7 +10,7 @@ import { TourModel } from "./tour.model"
 
 
 
-const createTourIntoDB = async(payload:TTour) => {
+const createTourIntoDB = async (payload: TTour) => {
     const result = TourModel.create(payload);
     return result;
 }
@@ -18,17 +18,37 @@ const createTourIntoDB = async(payload:TTour) => {
 
 
 const getAllToursFromDB = async () => {
-      const result = await TourModel.find();
-      return result;
-     
-  };
-  
-export const  TourServices = {
-    createTourIntoDB,
-    getAllToursFromDB
+    const result = await TourModel.find();
+    return result;
+
+};
+
+
+const updateTourIntoDB = async (
+    _id: string,
+    payload: Partial<TTour>,
+) => {
+    const result = await TourModel.findOneAndUpdate({ _id }, payload, {
+        new: true,
+    })
+
+    return result;
+}
+
+const deleteSingleItemFromDB = async (  id: string) => {
+    const result = await TourModel.deleteOne({_id : id});
+    return result;
  }
- 
- 
+
+
+export const TourServices = {
+    createTourIntoDB,
+    getAllToursFromDB,
+    updateTourIntoDB,
+    deleteSingleItemFromDB
+}
+
+
 
 
 

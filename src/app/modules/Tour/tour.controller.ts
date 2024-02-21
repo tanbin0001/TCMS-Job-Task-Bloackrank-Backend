@@ -29,8 +29,33 @@ const getAllTours = catchAsync(async(req, res) => {
     })
 });
 
+const updateTour = catchAsync(async(req, res) => {
+    const {_id} = req.params;
+
+    const result =  await  TourServices.updateTourIntoDB(_id, req.body);
+    sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Tour updated successfully!',
+        data: result
+    })
+});
+
+const deleteTour = catchAsync(async(req, res) => {
+    const {id} = req.params;
+
+    const result =  await  TourServices.deleteSingleItemFromDB(id );
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Tour deleted successfully!',
+        data: result
+    })
+});
 
 export const  TourControllers = {
     createTour,
-    getAllTours
+    getAllTours,
+    updateTour,
+    deleteTour
     }
