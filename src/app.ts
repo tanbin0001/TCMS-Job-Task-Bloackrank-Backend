@@ -18,7 +18,7 @@ app.use('/api', router);
 
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Learn Universe server running like a horse!');
+  res.send('  server running like a horse!');
 });
 
 
