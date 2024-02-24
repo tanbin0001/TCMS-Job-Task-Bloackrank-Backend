@@ -9,7 +9,17 @@ import { AuthServices } from "./auth.service";
 
 
 
+const getAllUsers =catchAsync(async(req, res) => {
+  const result =  await  AuthServices.getAllUsersFromDB();
+  sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: 'Users  retrieved  successfully',
+      data: result
+  })
+}
 
+)
 
 
 
@@ -67,7 +77,7 @@ const changePassword = catchAsync(async (req, res) => {
 export const  AuthControllers = {
 registerUser,
 loginUser,
- 
+getAllUsers,
 changePassword
  
 }

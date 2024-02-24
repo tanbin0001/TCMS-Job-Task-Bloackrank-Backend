@@ -8,7 +8,22 @@ import config from "../../config";
 
 
 const userSchema = new Schema<TUser,UserModel>({
+    firstName: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    lastName: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    imageLink: {
         type: String,
         required: true,
         unique: true,

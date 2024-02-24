@@ -1,9 +1,11 @@
 export interface TTour {
     tourName:      string;
     destination: string;
-    duration:    string;
     tourCreator:   string;
-    expenseStatus: 'pending' | 'paid';
+    imageLink: string;
+    startDate: Date;
+    endDate: Date;
+ 
 }
 
  

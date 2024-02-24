@@ -4,11 +4,13 @@ import { USER_ROLE } from "./user.const";
 
 export interface TUser  {
     _id:string;
-    username:string;
-    email:string,
-    password:string;
-    role?:  'user';
-   
+    firstName:string;
+    lastName:string;
+    username: string;
+    email: string;
+    imageLink: string;
+    password: string;
+    role:  'user';
     updatedAt?: Date;
 
 

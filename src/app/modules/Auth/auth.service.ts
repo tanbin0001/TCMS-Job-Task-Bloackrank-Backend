@@ -117,11 +117,14 @@ const changePassword = async (user: JwtPayload, payload: { currentPassword: stri
 };
 
  
-
+const getAllUsersFromDB= async() => {
+    const result = User.find();
+    return result;
+}
 
 export const AuthServices = {
     registerUserIntoDb,
     loginUserIntoDb,
-     
+    getAllUsersFromDB,
     changePassword
 }

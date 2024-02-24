@@ -15,5 +15,5 @@ const router = express.Router();
 router.post('/register',validateRequest(AuthValidations.registrationValidationSchema), AuthControllers.registerUser)
 router.post('/login',validateRequest(AuthValidations.loginValidationSchema), AuthControllers.loginUser)
 router.post('/change-password', auth('user'), AuthControllers.changePassword)
-
+router.get('/users',AuthControllers.getAllUsers);
 export const AuthRoutes = router;
