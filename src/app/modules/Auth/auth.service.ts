@@ -9,8 +9,7 @@ import config from "../../config";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { sendEmail } from "../../../utils/sendEmail";
-
-
+import { ObjectId } from "mongodb";
 const registerUserIntoDb = async (payload: TRegisterUser) => {
     const userData = await User.isUserExists(payload.username)
     // checking if user exists 
@@ -131,10 +130,12 @@ const getAllUsersFromDB = async () => {
 
 
 
-const forgetPassword = async (userId: string) => {
+const forgetPassword = async (email: string) => {
+
     // checking if the user is exist
  
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findOne({email});
+
  
  
     if (!user) {
@@ -144,9 +145,10 @@ const forgetPassword = async (userId: string) => {
 
 
     const jwtPayload = {
-        userId: user.id,
+        userId: user._id.toString(),
         role: user.role,
     };
+console.log(jwtPayload,'from jwtpayload');
 
  
     const resetToken = createToken(
@@ -154,32 +156,35 @@ const forgetPassword = async (userId: string) => {
         config.jwt_access_secret as string,
         '10m',
     );
-
+console.log(resetToken,'from reset token');
     const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken} `;
 
     sendEmail(user.email, resetUILink);
 };
 
   const resetPassword = async (
-    payload: { _id: string; newPassword: string },
+    payload: { email: string; newPassword: string },
     token: string,
   ) => {
 
      // checking if the user is exist
-    const user = await User.findOne({_id:payload?._id});
+    const user = await User.findOne({email:payload?.email});
+   
 
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
     }
-    // checking if the user is already deleted
+    
    
     const decoded = jwt.verify(
       token,
       config.jwt_access_secret as string,
     ) as JwtPayload;
  
- 
-    if (payload._id !== decoded._id) {
+    
+    
+    const userId =  user._id.toString()
+    if (userId !== decoded.userId) {
       throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
     }
 
@@ -191,16 +196,14 @@ const forgetPassword = async (userId: string) => {
 
    const rest =  await User.findOneAndUpdate(
       {
-        _id: decoded._id,
+        _id: decoded.userId,
         role: decoded.role,
       },
       {
         password: newHashedPassword,
       },
     );
-    console.log('*************************************************************');
-    console.log(rest);
-    console.log('*************************************************************');
+ 
   };
 
 export const AuthServices = {
