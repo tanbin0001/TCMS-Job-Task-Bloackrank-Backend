@@ -10,5 +10,6 @@ const router = express.Router();
 
 
 router.post('/record-expense', ExpenseControllers.createExpense)
+router.get('/all-expenses', ExpenseControllers.getAllExpenses)
  
 export const ExpenseRoutes = router;
