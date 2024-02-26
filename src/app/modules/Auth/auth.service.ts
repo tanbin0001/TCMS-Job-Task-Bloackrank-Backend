@@ -9,7 +9,7 @@ import config from "../../config";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { sendEmail } from "../../../utils/sendEmail";
-import { ObjectId } from "mongodb";
+ 
 const registerUserIntoDb = async (payload: TRegisterUser) => {
     const userData = await User.isUserExists(payload.username)
     // checking if user exists 
@@ -145,10 +145,11 @@ const forgetPassword = async (email: string) => {
 
 
     const jwtPayload = {
-        userId: user._id.toString(),
+        _id: user._id.toString() as string,
         role: user.role,
+        email: user.email
     };
-console.log(jwtPayload,'from jwtpayload');
+ 
 
  
     const resetToken = createToken(
@@ -156,7 +157,6 @@ console.log(jwtPayload,'from jwtpayload');
         config.jwt_access_secret as string,
         '10m',
     );
-console.log(resetToken,'from reset token');
     const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken} `;
 
     sendEmail(user.email, resetUILink);

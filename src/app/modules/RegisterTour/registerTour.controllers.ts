@@ -15,7 +15,7 @@ const registerTour = catchAsync(async(req, res) => {
 const getMyRegisteredTours = catchAsync(async(req, res) => {
     const { _id } = req.query;
  
-    const result =  await  RegisterTourServices.getMyRegisteredTours(_id);
+    const result =  await  RegisterTourServices.getMyRegisteredTours((_id as string));
     sendResponse(res, {
         statusCode: 201,
         success: true,
@@ -25,7 +25,7 @@ const getMyRegisteredTours = catchAsync(async(req, res) => {
 });
 const getAllRegisteredTours = catchAsync(async(req, res) => {
     const result =  await  RegisterTourServices.getAllRegisteredTours();
-    console.log(result ,'from controller ');
+
     sendResponse(res, {
         statusCode: 201,
         success: true,

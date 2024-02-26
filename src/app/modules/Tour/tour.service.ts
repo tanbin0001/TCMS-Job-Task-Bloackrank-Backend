@@ -29,18 +29,14 @@ const updateTourIntoDB = async (
     _id: string,
     payload: Partial<TTour>,
 ) => {
-  
- 
- 
-
     const result = await TourModel.findOneAndUpdate({ _id }, payload, {
         new: true,
     })
     return result;
 }
 
-const deleteSingleItemFromDB = async (  id: string) => {
-    const result = await TourModel.deleteOne({_id : id});
+const deleteSingleItemFromDB = async (  _id: string) => {
+    const result = await TourModel.deleteOne({_id });
     return result;
  }
 
