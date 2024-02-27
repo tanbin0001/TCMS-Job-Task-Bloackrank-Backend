@@ -24,8 +24,6 @@ const userSchema = new Schema<TUser,UserModel>({
     },
     imageLink: {
         type: String,
-        required: true,
-        default:'no image found'
     },
    
     email:{
