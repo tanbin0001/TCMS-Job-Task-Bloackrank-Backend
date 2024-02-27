@@ -1,14 +1,15 @@
 import { z } from "zod";
 
-const tourDetailsSchema = z.object({
-    destination: z.string().nonempty(),
-    duration: z.string().nonempty()
-});
  
-export const TTourSchema = z.object({
-    tourName: z.string().nonempty(),
-    tourDetails: tourDetailsSchema,
-    tourCreator: z.string().nonempty(),
-    date: z.date(),
-    expenseStatus: z.enum(['pending', 'paid'])
-});
+const tourValidationSchema = z.object({
+  tourName: z.string({ required_error: "Tour name cannot be empty" }),
+  destination: z.string({ required_error: "Destination cannot be empty" }),
+  tourCreator: z.string({ required_error: "Tour creator cannot be empty" }),
+  imageLink: z.string({ required_error: "Image link must be a valid URL" }),
+  startDate: z.coerce.date() ,
+  endDate: z.coerce.date(),
+}) 
+
+export const TourValidations = {
+tourValidationSchema
+};

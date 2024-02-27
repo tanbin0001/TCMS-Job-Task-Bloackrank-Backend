@@ -11,12 +11,11 @@ const userSchema = new Schema<TUser,UserModel>({
     firstName: {
         type: String,
         required: true,
-        unique: true,
+    
     },
     lastName: {
         type: String,
-        required: true,
-        unique: true,
+       
     },
     username: {
         type: String,
@@ -26,7 +25,7 @@ const userSchema = new Schema<TUser,UserModel>({
     imageLink: {
         type: String,
         required: true,
-        unique: true,
+        default:'no image found'
     },
    
     email:{
@@ -71,6 +70,9 @@ userSchema.pre('save', async function (next) {
  
 userSchema.statics.isUserExists = async function (username: string) {
     return await User.findOne({ username }).select('+password');
+}
+userSchema.statics.isUserExistsWithEmail = async function (email: string) {
+    return await User.findOne({ email }).select('+password');
 }
 userSchema.statics.isUserPasswordMatched = async function (plainTextPassword, hashedPassword) {
     return await bcrypt.compare(plainTextPassword, hashedPassword)

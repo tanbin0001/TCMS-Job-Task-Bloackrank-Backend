@@ -6,7 +6,7 @@ import { TLoginUser, TRegisterUser } from "./auth.interface"
 import { AppError } from "../../errors/AppError";
 import { createToken } from "./auth.utils";
 import config from "../../config";
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, decode } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { sendEmail } from "../../../utils/sendEmail";
  
@@ -34,16 +34,64 @@ const registerUserIntoDb = async (payload: TRegisterUser) => {
 
 
 
+// const loginUserIntoDb = async (payload: TLoginUser) => {
+//     const userData = await User.isUserExists(payload.username)
+//     //checking if user exists 
+//     if (!userData) {
+//         throw new AppError(httpStatus.NOT_FOUND, 'This user is not found')
+//     }
+
+//     // checking if the pass is correct
+//     if (! await User.isUserPasswordMatched(payload?.password, userData.password)) {
+//         throw new AppError(httpStatus.FORBIDDEN, 'Password is not matched!')
+//     }
+
+//     const { _id, username, email, role } = userData;
+
+//     const dataWithoutPassword = {
+//         _id: _id,
+//         username: username,
+//         email: email,
+//         role: role
+
+
+//     }
+
+
+//     //create token and send to client
+//     const jwtPayload = {
+//         _id: userData._id,
+//         role: userData.role as string,
+//         email: userData.email,
+
+//     }
+//     const accessToken = createToken(jwtPayload, config.jwt_access_secret as string, config.jwt_access_expiresIn as string)
+//     return {
+//         data: dataWithoutPassword,
+//         token: accessToken,
+//     };
+
+// }
+
 const loginUserIntoDb = async (payload: TLoginUser) => {
-    const userData = await User.isUserExists(payload.username)
-    //checking if user exists 
+    let userData;
+    // Check if the input is an email
+    if (payload.username.includes('@')) {
+        // If it's an email, find user by email
+        userData = await User.isUserExistsWithEmail(payload.username);
+    } else {
+        // If it's not an email, find user by username
+        userData = await User.isUserExists(payload.username);
+    }
+    
+    // Checking if user exists
     if (!userData) {
-        throw new AppError(httpStatus.NOT_FOUND, 'This user is not found')
+        throw new AppError(httpStatus.NOT_FOUND, 'This user is not found');
     }
 
-    // checking if the pass is correct
-    if (! await User.isUserPasswordMatched(payload?.password, userData.password)) {
-        throw new AppError(httpStatus.FORBIDDEN, 'Password is not matched!')
+    // Checking if the password is correct
+    if (!await User.isUserPasswordMatched(payload.password, userData.password)) {
+        throw new AppError(httpStatus.FORBIDDEN, 'Password is not matched!');
     }
 
     const { _id, username, email, role } = userData;
@@ -53,25 +101,21 @@ const loginUserIntoDb = async (payload: TLoginUser) => {
         username: username,
         email: email,
         role: role
+    };
 
-
-    }
-
-
-    //create token and send to client
+    // Create token and send to client
     const jwtPayload = {
         _id: userData._id,
         role: userData.role as string,
         email: userData.email,
-
-    }
-    const accessToken = createToken(jwtPayload, config.jwt_access_secret as string, config.jwt_access_expiresIn as string)
+    };
+    const accessToken = createToken(jwtPayload, config.jwt_access_secret as string, config.jwt_access_expiresIn as string);
+    
     return {
         data: dataWithoutPassword,
         token: accessToken,
     };
-
-}
+};
 
 
 const changePassword = async (user: JwtPayload, payload: { currentPassword: string, newPassword: string }) => {
@@ -184,7 +228,8 @@ const forgetPassword = async (email: string) => {
     
     
     const userId =  user._id.toString()
-    if (userId !== decoded.userId) {
+    console.log(userId, decoded );
+    if (userId !== decoded._id) {
       throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
     }
 
@@ -194,15 +239,17 @@ const forgetPassword = async (email: string) => {
       Number(config.bcrypt_salt_rounds),
     );
 
-   const rest =  await User.findOneAndUpdate(
+   const res=  await User.findOneAndUpdate(
       {
-        _id: decoded.userId,
+        _id: decoded._id,
         role: decoded.role,
       },
       {
         password: newHashedPassword,
       },
     );
+
+ console.log(res);
  
   };
 

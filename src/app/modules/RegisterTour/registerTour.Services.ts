@@ -7,13 +7,11 @@ const registerTourIntoDB = async (payload: TRegisterTour) => {
 
 const getAllRegisteredTours = async() => {
     const result = RegisterTourModel.find().populate('tourId').populate('participants.userId');
-    console.log(result,'from dddddddddddddddddd');
     return result;
 
 }
  
 const getMyRegisteredTours = async (_id: string): Promise<any[]> => {
-    console.log(_id,'from service');
     try {
         const allRegisteredTours = await RegisterTourModel.find();
 

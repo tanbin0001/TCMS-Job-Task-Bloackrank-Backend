@@ -3,8 +3,8 @@ import { Types } from "mongoose";
 export  interface TParticipant {
     userId: Types.ObjectId;
     initialContribution: number;
-    // currentBalance: number;
-    totalSpend?:number
+    totalSpend?:number;
+    otherExpenses?:number
     dueOrLoan?:number
 }
 

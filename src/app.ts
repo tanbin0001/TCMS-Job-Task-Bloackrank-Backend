@@ -10,7 +10,13 @@ const app: Application = express();
 
 //parsers
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204
+}));
+// app.use(cors({origin:'*'}));
 
 // application routes
 app.use('/api', router);
@@ -18,6 +24,7 @@ app.use('/api', router);
 
 
 app.get('/', (req: Request, res: Response) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
   res.send('  server running like a horse!');
 });
 

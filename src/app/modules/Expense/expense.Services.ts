@@ -45,6 +45,8 @@ const createExpenseIntoDb = async (payload: any) => {
     for (const participant of registeredTour.participants) {
         const dueOrLoan = (participant.totalSpend || 0) - perHeadCost;
         participant.dueOrLoan = Math.round(dueOrLoan);
+        const otherExpenses = Math.round((participant.totalSpend || 0) - (participant.initialContribution || 0));
+        participant.otherExpenses = otherExpenses;
     }
 
      await registeredTour.save();
